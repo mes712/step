@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Chooses a random cat photo to display on page
- */
+/** Chooses a random cat photo to display on page. */
 function changeCatPhoto() {
   const photos =
       ["/images/cats-1.jpg", "/images/cats-2.jpg", "/images/cats-3.jpg", "/images/cats-4.JPG", "/images/cats-5.jpg"];
 
   // Pick a random cat photo.
   const photo = photos[Math.floor(Math.random() * photos.length)];
-  console.log("changed photo to " + photo);
-
+  
   // Display it on the page.
   const newPhoto = document.getElementById('cat-image');
   newPhoto.src = photo;
