@@ -15,14 +15,15 @@
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function changeCatPhoto() {
+  const photos =
+      ["/images/cats-1.jpg", "/images/cats-2.jpg", "/images/cats-3.jpg", "/images/cats-4.JPG", "/images/cats-5.jpg"];
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const photo = photos[Math.floor(Math.random() * photos.length)];
+  console.log("changed photo to " + photo);
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const newPhoto = document.getElementById('cat-image');
+  newPhoto.src = photo;
 }
