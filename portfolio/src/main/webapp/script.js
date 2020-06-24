@@ -15,7 +15,7 @@
 /** Chooses a random cat photo to display on page. */
 function changeCatPhoto() {
   const photos =
-      ["/images/cats-1.jpg", "/images/cats-2.jpg", "/images/cats-3.jpg", "/images/cats-4.JPG", "/images/cats-5.jpg"];
+      ["/images/cats-1.jpg", "/images/cats-2.jpg", "/images/cats-3.jpg", "/images/cats-4.JPG", "/images/cats-5.jpg", "/images/cats-6.jpg", "/images/cats-7.jpg"];
 
   // Pick a random cat photo.
   const photo = photos[Math.floor(Math.random() * photos.length)];
