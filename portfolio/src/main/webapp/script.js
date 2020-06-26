@@ -21,12 +21,13 @@ function changeCatPhoto() {
        "/images/cats-4.JPG", 
        "/images/cats-5.jpg", 
        "/images/cats-6.jpg", 
-       "/images/cats-7.jpg"];
+       "/images/cats-7.JPG"];
 
   // Pick a random cat photo.
   const photo = photos[Math.floor(Math.random() * photos.length)];
   
   // Display it on the page.
   const newPhoto = document.getElementById('cat-image');
+  console.log(newPhoto);
   newPhoto.src = photo;
 }
