@@ -31,9 +31,3 @@ function changeCatPhoto() {
   console.log(newPhoto);
   newPhoto.src = photo;
 }
-
-async function getHello() {
-    const response = await fetch('/data');
-    const greeting = await response.text();
-    document.getElementById('greeting-container').innerHTML = greeting;
-}
