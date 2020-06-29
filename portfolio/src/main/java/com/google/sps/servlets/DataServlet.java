@@ -22,21 +22,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
+import com.google.common.collect.ImmutableList;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns list of greeting messages. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  private static final ImmutableList HELLO_MESSAGES = ImmutableList.of("Hello Megan!", "Hello there!", "Hello!");
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> hellos = new ArrayList<String>();
-    hellos.add("Hello Megan!");
-    hellos.add("Hello there!");
-    hellos.add("Hello!");
     response.setContentType("application/json;");
-    // response.getWriter().println("<h1>Hello Megan!</h1>");
     Gson gson = new Gson();
-    String json = gson.toJson(hellos);
+    String json = gson.toJson(HELLO_MESSAGES);
     response.getWriter().println(json);
   }
 }
