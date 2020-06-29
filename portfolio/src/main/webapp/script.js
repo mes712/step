@@ -28,12 +28,12 @@ function changeCatPhoto() {
   
   // Display it on the page.
   const newPhoto = document.getElementById('cat-image');
-  console.log(newPhoto);
   newPhoto.src = photo;
 }
 
+/** Displays a random Hello greeting at the bottom of the home page. */
 async function getHello() {
-    const response = await fetch('/data');
-    const greeting = await response.text();
-    document.getElementById('greeting-container').innerHTML = greeting;
+    const response = await fetch('/data').then(response => response.json())
+    const greeting = response[Math.floor(Math.random() * response.length)];
+    document.getElementById('greeting-container').innerText = greeting;
 }
