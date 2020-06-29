@@ -19,15 +19,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import com.google.gson.Gson;
 import com.google.common.collect.ImmutableList;
 
 /** Servlet that returns list of greeting messages. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static final ImmutableList HELLO_MESSAGES = ImmutableList.of("Hello Megan!", "Hello there!", "Hello!");
+  private static final ImmutableList<String> HELLO_MESSAGES = ImmutableList.of("Hello Megan!", "Hello there!", "Hello!");
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
