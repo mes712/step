@@ -34,8 +34,8 @@ function changeCatPhoto() {
 /* Displays all comments left on page. */
 async function getComments() {
   const response = await fetch('/data').then(response => response.json())
-  for (var i = 0; i < response.length; i++) {
-    document.getElementById('comments-section').innerHTML += 
-        response[i]['commentText'] + " -- " + response[i]['displayName'] + "<br/>";
-  }  
+  for (const comment of response) {
+      document.getElementById('comments-section').innerHTML +=
+        comment['commentText'] + " --" + comment['displayName'] + "<br>";
+  }
 }
