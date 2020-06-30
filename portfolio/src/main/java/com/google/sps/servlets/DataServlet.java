@@ -20,18 +20,60 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 
-/** Servlet that returns list of greeting messages. TODO: modify this file to handle comments data */
+/** Servlet that handles comment data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static final ImmutableList<String> HELLO_MESSAGES = ImmutableList.of("Hello Megan!", "Hello there!", "Hello!");
+  private static final String COMMENT_NAME = "comment";
+  private static final String DISPLAY_NAME = "name";
+  private static final String DEFAULT_VAL = "";
+  private List<Comment> comments = new ArrayList<Comment>();
+
+   @Override
+   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+     response.setContentType("application/json;");
+     Gson gson = new Gson();
+     String json = gson.toJson(comments);
+     response.getWriter().println(json);
+   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
-    Gson gson = new Gson();
-    String json = gson.toJson(HELLO_MESSAGES);
-    response.getWriter().println(json);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = getParameter(request, COMMENT_NAME, DEFAULT_VAL);
+    String displayName = getParameter(request, DISPLAY_NAME, DEFAULT_VAL);
+
+    Comment com = new Comment(comment, displayName);
+    comments.add(com);
+    response.sendRedirect("/index.html");
   }
-}
+
+    /**
+   * Returns parameter of given name from servlet request, or a default value if not specified.
+   *
+   * @param request -- the servlet request from client
+   * @param name -- the name of the request parameter to get
+   * @param defaultValue -- default value to return if not specified
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client.
+   */
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null || value.equals("")) {
+      return defaultValue;
+    }
+    return value;
+  }
+
+  /* Holds all data for a single comment. */
+  private class Comment {
+    private String commentText;
+    private String displayName;
+
+    public Comment(String commentText, String displayName) {
+      this.commentText = commentText;
+      this.displayName = displayName;
+    }
+  }
+}  
