@@ -21,11 +21,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
 
 /** Servlet that handles comment data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private ArrayList<Comment> comments = new ArrayList<Comment>();
+  private static final String COMMENT_NAME = "comment";
+  private static final String DISPLAY_NAME = "name";
+  private static final String DEFAULT_VAL = "";
+  private List<Comment> comments = new ArrayList<Comment>();
 
    @Override
    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -37,8 +41,8 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment = getParameter(request, "comment", "");
-    String displayName = getParameter(request, "name", "");
+    String comment = getParameter(request, COMMENT_NAME, DEFAULT_VAL);
+    String displayName = getParameter(request, DISPLAY_NAME, DEFAULT_VAL);
 
     Comment com = new Comment(comment, displayName);
     comments.add(com);
@@ -46,12 +50,16 @@ public class DataServlet extends HttpServlet {
   }
 
     /**
+   * Returns value of request parameter name, or a default value if not specified.
+   * @param request -- client comment servlet request
+   * @param name -- parameter of servlet request to return
+   * @param defaultValue -- value to return if not specified by client
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client.
    */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+  private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
-    if (value == null) {
+    if (value == null || value.equals("")) {
       return defaultValue;
     }
     return value;

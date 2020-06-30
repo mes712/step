@@ -36,6 +36,6 @@ async function getComments() {
   const response = await fetch('/data').then(response => response.json())
   for (var i = 0; i < response.length; i++) {
     document.getElementById('comments-section').innerHTML += 
-        response[i]["commentText"] + " -- " + response[i]["displayName"] + "<br/>";
+        response[i]['commentText'] + " -- " + response[i]['displayName'] + "<br/>";
   }  
 }
