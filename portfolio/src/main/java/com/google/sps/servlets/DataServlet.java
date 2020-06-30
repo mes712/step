@@ -20,18 +20,51 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 
-/** Servlet that returns list of greeting messages. TODO: modify this file to handle comments data */
+/** Servlet that handles comment data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static final ImmutableList<String> HELLO_MESSAGES = ImmutableList.of("Hello Megan!", "Hello there!", "Hello!");
+  private ArrayList<Comment> comments = new ArrayList<Comment>();
+
+   @Override
+   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+     response.setContentType("application/json;");
+     Gson gson = new Gson();
+     String json = gson.toJson(comments);
+     response.getWriter().println(json);
+   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
-    Gson gson = new Gson();
-    String json = gson.toJson(HELLO_MESSAGES);
-    response.getWriter().println(json);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String comment = getParameter(request, "comment", "");
+    String displayName = getParameter(request, "name", "");
+
+    Comment com = new Comment(comment, displayName);
+    comments.add(com);
+    response.sendRedirect("/index.html");
   }
-}
+
+    /**
+   * @return the request parameter, or the default value if the parameter
+   *         was not specified by the client.
+   */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return defaultValue;
+    }
+    return value;
+  }
+
+  /* Holds all data for a single comment. */
+  private class Comment {
+    private String commentText;
+    private String displayName;
+
+    public Comment(String commentText, String displayName) {
+      this.commentText = commentText;
+      this.displayName = displayName;
+    }
+  }
+}  

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getHello()">
+  <body onload="getComments()">
     <div id="content">
       <ul>
         <li><a href="index.html" class="active">Home</a></li>
@@ -36,6 +36,17 @@
         </a>
       </p>
     </div>
-    <div id="greeting-container"></div>
+    <p>Leave a Comment:</p>
+    <form action="/data" method="POST">
+      <p>Enter display name here:</p>
+      <textarea name="name"></textarea>
+      <br/>
+      <p>Enter comment here:</p>
+      <textarea name="comment"></textarea>
+      <br/>
+      <input type="submit"/>
+      <br/><br/>
+    </form>
+    <div id="comments-section"></div>
   </body>
 </html>

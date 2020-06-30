@@ -31,9 +31,11 @@ function changeCatPhoto() {
   newPhoto.src = photo;
 }
 
-/** Displays a random Hello greeting at the bottom of the home page. */
-async function getHello() {
-    const response = await fetch('/data').then(response => response.json())
-    const greeting = response[Math.floor(Math.random() * response.length)];
-    document.getElementById('greeting-container').innerText = greeting;
+/* Displays all comments left on page. */
+async function getComments() {
+  const response = await fetch('/data').then(response => response.json())
+  for (var i = 0; i < response.length; i++) {
+    document.getElementById('comments-section').innerHTML += 
+        response[i]["commentText"] + " -- " + response[i]["displayName"] + "<br/>";
+  }  
 }
