@@ -14,56 +14,82 @@
 
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.common.collect.ImmutableList;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.common.collect.Streams;
 
 /** Servlet that handles comment data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static final String COMMENT_NAME = "comment";
-  private static final String DISPLAY_NAME = "name";
+  private static final String COMMENT_PROP = "comment";
+  private static final String DISPLAY_PROP = "name";
+  private static final String TIME_PROP = "timestamp";
   private static final String DEFAULT_VAL = "";
-  private List<Comment> comments = new ArrayList<Comment>();
 
    @Override
-   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-     response.setContentType("application/json;");
-     Gson gson = new Gson();
-     String json = gson.toJson(comments);
-     response.getWriter().println(json);
-   }
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    ImmutableList<Comment> comments = 
+        Streams.stream(results.asIterable())
+            .map(entity -> (makeComment(entity)))
+            .collect(toImmutableList());
+            
+    response.setContentType("application/json;");
+    Gson gson = new Gson();
+    String json = gson.toJson(comments);
+    response.getWriter().println(json);
+  }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String comment = getParameter(request, COMMENT_NAME, DEFAULT_VAL);
-    String displayName = getParameter(request, DISPLAY_NAME, DEFAULT_VAL);
+    String commentText = getParameter(request, COMMENT_PROP, DEFAULT_VAL);
+    String displayName = getParameter(request, DISPLAY_PROP, DEFAULT_VAL);
+    long timestamp = System.currentTimeMillis();
 
-    Comment com = new Comment(comment, displayName);
-    comments.add(com);
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty(COMMENT_PROP, commentText);
+    commentEntity.setProperty(DISPLAY_PROP, displayName);
+    commentEntity.setProperty(TIME_PROP, timestamp);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
     response.sendRedirect("/index.html");
   }
 
     /**
-   * Returns parameter of given name from servlet request, or a default value if not specified.
-   *
-   * @param request -- the servlet request from client
-   * @param name -- the name of the request parameter to get
-   * @param defaultValue -- default value to return if not specified
+   * Returns value of request parameter name, or a default value if not specified.
+   * @param request -- client comment servlet request
+   * @param name -- parameter of servlet request to return
+   * @param defaultValue -- value to return if not specified by client
    * @return the request parameter, or the default value if the parameter
    *         was not specified by the client.
    */
   private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
-    if (value == null || value.equals("")) {
+    if (value == null || value.equals(DEFAULT_VAL)) {
       return defaultValue;
     }
     return value;
+  }
+
+  private Comment makeComment(Entity ent) {
+    Comment comment = new Comment((String) ent.getProperty(COMMENT_PROP), 
+                                  (String) ent.getProperty(DISPLAY_PROP));
+    return comment;
   }
 
   /* Holds all data for a single comment. */
