@@ -45,10 +45,9 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Task").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    ImmutableList<Comment> comments = ImmutableList.of(new Comment("HI", "THERE"));
-    Streams.stream(results.asIterable())
-         .map(entity -> (new Comment((String) entity.getProperty("comment"), (String) entity.getProperty("name"))))
-         .collect(toImmutableList());
+    ImmutableList<Comment> comments = Streams.stream(results.asIterable())
+        .map(entity -> (new Comment((String) entity.getProperty("comment"), (String) entity.getProperty("name"))))
+        .collect(toImmutableList());
 
     Gson gson = new Gson();
     String json = gson.toJson(comments);
