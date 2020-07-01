@@ -33,6 +33,11 @@
       <artifactId>guava</artifactId>
       <version>23.5-jre</version> <!-- or 23.5-android for the Android flavor -->
     </dependency>
+    <dependency>
+      <groupId>com.google.appengine</groupId>
+      <artifactId>appengine-api-1.0-sdk</artifactId>
+      <version>1.9.59</version>
+    </dependency>
   </dependencies>
 
   <build>
