@@ -42,7 +42,7 @@ public class DataServlet extends HttpServlet {
    @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
-    Query query = new Query("Task").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Comment> comments = Streams.stream(results.asIterable())
