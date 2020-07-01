@@ -35,18 +35,19 @@ import com.google.common.collect.Streams;
 /** Servlet that handles comment data. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-  private static final String COMMENT_NAME = "comment";
-  private static final String DISPLAY_NAME = "name";
+  private static final String COMMENT_PROP = "comment";
+  private static final String DISPLAY_PROP = "name";
+  private static final String TIME_PROP = "timestamp";
   private static final String DEFAULT_VAL = "";
 
    @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     ImmutableList<Comment> comments = 
         Streams.stream(results.asIterable())
-            .map(entity -> (new Comment((String) entity.getProperty("comment"), (String) entity.getProperty("name"))))
+            .map(entity -> (makeComment(entity)))
             .collect(toImmutableList());
             
     response.setContentType("application/json;");
@@ -57,14 +58,14 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String commentText = getParameter(request, COMMENT_NAME, DEFAULT_VAL);
-    String displayName = getParameter(request, DISPLAY_NAME, DEFAULT_VAL);
+    String commentText = getParameter(request, COMMENT_PROP, DEFAULT_VAL);
+    String displayName = getParameter(request, DISPLAY_PROP, DEFAULT_VAL);
     long timestamp = System.currentTimeMillis();
 
     Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("comment", commentText);
-    commentEntity.setProperty("name", displayName);
-    commentEntity.setProperty("timestamp", timestamp);
+    commentEntity.setProperty(COMMENT_PROP, commentText);
+    commentEntity.setProperty(DISPLAY_PROP, displayName);
+    commentEntity.setProperty(TIME_PROP, timestamp);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -81,10 +82,16 @@ public class DataServlet extends HttpServlet {
    */
   private static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
-    if (value == null || value.equals("")) {
+    if (value == null || value.equals(DEFAULT_VAL)) {
       return defaultValue;
     }
     return value;
+  }
+
+  private Comment makeComment(Entity ent) {
+    Comment comment = new Comment((String) ent.getProperty(COMMENT_PROP), 
+                                  (String) ent.getProperty(DISPLAY_PROP));
+    return comment;
   }
 
   /* Holds all data for a single comment. */
