@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +31,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.common.collect.Streams;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /** Servlet that handles comment data. */
 @WebServlet("/data")
@@ -41,14 +41,15 @@ public class DataServlet extends HttpServlet {
 
    @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    ImmutableList<Comment> comments = Streams.stream(results.asIterable())
-        .map(entity -> (new Comment((String) entity.getProperty("comment"), (String) entity.getProperty("name"))))
-        .collect(toImmutableList());
-
+    ImmutableList<Comment> comments = 
+        Streams.stream(results.asIterable())
+            .map(entity -> (new Comment((String) entity.getProperty("comment"), (String) entity.getProperty("name"))))
+            .collect(toImmutableList());
+            
+    response.setContentType("application/json;");
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     response.getWriter().println(json);
