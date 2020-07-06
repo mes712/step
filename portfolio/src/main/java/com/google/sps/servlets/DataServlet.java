@@ -36,6 +36,7 @@ public class DataServlet extends HttpServlet {
   private static final String COMMENT_PROP = "comment";
   private static final String DISPLAY_PROP = "name";
   private static final String TIME_PROP = "timestamp";
+  private static final String MAX_COMMENT_PROP = "max-comments";
   private static final String DEFAULT_VAL = "";
 
    @Override
@@ -43,7 +44,7 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    int max = Integer.parseInt(request.getParameter("max-comments"));
+    int max = Integer.parseInt(request.getParameter(MAX_COMMENT_PROP));
     ImmutableList<Comment> comments = 
         Streams.stream(results.asIterable())
             .map(entity -> (makeComment(entity)))
