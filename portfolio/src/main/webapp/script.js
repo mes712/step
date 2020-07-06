@@ -33,11 +33,11 @@ function changeCatPhoto() {
 
 /* Displays all comments left on page. */
 async function getComments(max) {
-  document.getElementById('comments-section').innerHTML = "";
+  document.getElementById('comments-section').innerHTML = '';
   const response = await fetch('/data?max-comments=' + max).then(response => response.json())
   for (const comment of response) {
       document.getElementById('comments-section').innerHTML +=
-        comment["commentText"] + " --" + comment["displayName"] + "<br>";
+        comment['commentText'] + " --" + comment['displayName'] + '<br>';
   }
 }
 

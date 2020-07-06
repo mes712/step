@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -26,7 +27,7 @@ public class DeleteServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query); 
         ImmutableList<Key> keys = 
             Streams.stream(results.asIterable())
-                .map(entity -> entity.getKey())
+                .map(Entity::getKey)
                 .collect(toImmutableList());
         datastore.delete(keys);  
         response.sendRedirect("/index.html");

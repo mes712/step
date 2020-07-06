@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -47,7 +48,7 @@ public class DataServlet extends HttpServlet {
     int max = Integer.parseInt(request.getParameter(MAX_COMMENT_PROP));
     ImmutableList<Comment> comments = 
         Streams.stream(results.asIterable())
-            .map(entity -> (makeComment(entity)))
+            .map(DataServlet::makeComment)
             .limit(max)
             .collect(toImmutableList());
             
@@ -89,14 +90,14 @@ public class DataServlet extends HttpServlet {
     return value;
   }
 
-  private Comment makeComment(Entity ent) {
+  private static Comment makeComment(Entity ent) {
     Comment comment = new Comment((String) ent.getProperty(COMMENT_PROP), 
                                   (String) ent.getProperty(DISPLAY_PROP));
     return comment;
   }
 
   /* Holds all data for a single comment. */
-  private class Comment {
+  private static class Comment {
     private String commentText;
     private String displayName;
 
