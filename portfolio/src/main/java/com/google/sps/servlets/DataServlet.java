@@ -15,14 +15,13 @@
 package com.google.sps.servlets;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import java.util.ArrayList;
-import java.util.List;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -38,6 +37,7 @@ public class DataServlet extends HttpServlet {
   private static final String COMMENT_PROP = "comment";
   private static final String DISPLAY_PROP = "name";
   private static final String TIME_PROP = "timestamp";
+  private static final String MAX_COMMENT_PROP = "max-comments";
   private static final String DEFAULT_VAL = "";
 
    @Override
@@ -45,9 +45,11 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
+    int max = Integer.parseInt(request.getParameter(MAX_COMMENT_PROP));
     ImmutableList<Comment> comments = 
         Streams.stream(results.asIterable())
-            .map(entity -> (makeComment(entity)))
+            .map(DataServlet::makeComment)
+            .limit(max)
             .collect(toImmutableList());
             
     response.setContentType("application/json;");
@@ -88,14 +90,14 @@ public class DataServlet extends HttpServlet {
     return value;
   }
 
-  private Comment makeComment(Entity ent) {
+  private static Comment makeComment(Entity ent) {
     Comment comment = new Comment((String) ent.getProperty(COMMENT_PROP), 
                                   (String) ent.getProperty(DISPLAY_PROP));
     return comment;
   }
 
   /* Holds all data for a single comment. */
-  private class Comment {
+  private static class Comment {
     private String commentText;
     private String displayName;
 
