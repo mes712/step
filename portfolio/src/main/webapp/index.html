@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getComments()">
+  <body onload="getComments(5)">
     <div id="content">
       <ul>
         <li><a href="index.html" class="active">Home</a></li>
@@ -47,6 +47,9 @@
       <input type="submit"/>
       <br><br>
     </form>
+    <label>Max number of comments to display:</label>
+    <input type="number" min="0" value="5" onchange="getComments(this.value)">
     <div id="comments-section"></div>
+    <button onclick="deleteComments()">Delete all comments</button>
   </body>
 </html>

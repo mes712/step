@@ -43,9 +43,11 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Comment").addSort(TIME_PROP, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
+    int max = Integer.parseInt(request.getParameter("max-comments"));
     ImmutableList<Comment> comments = 
         Streams.stream(results.asIterable())
             .map(entity -> (makeComment(entity)))
+            .limit(max)
             .collect(toImmutableList());
             
     response.setContentType("application/json;");

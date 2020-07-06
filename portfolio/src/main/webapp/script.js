@@ -32,10 +32,17 @@ function changeCatPhoto() {
 }
 
 /* Displays all comments left on page. */
-async function getComments() {
-  const response = await fetch('/data').then(response => response.json())
+async function getComments(max) {
+  document.getElementById('comments-section').innerHTML = "";
+  const response = await fetch('/data?max-comments=' + max).then(response => response.json())
   for (const comment of response) {
       document.getElementById('comments-section').innerHTML +=
         comment["commentText"] + " --" + comment["displayName"] + "<br>";
   }
+}
+
+/* Deletes all stored comments. */
+async function deleteComments() {
+    const response = await fetch('/delete-data', {method: 'POST'});
+    getComments(0);
 }
