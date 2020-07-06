@@ -37,7 +37,7 @@ async function getComments(max) {
   const response = await fetch('/data?max-comments=' + max).then(response => response.json())
   for (const comment of response) {
       document.getElementById('comments-section').innerHTML +=
-        comment['commentText'] + " --" + comment['displayName'] + '<br>';
+        comment['commentText'] + ' --' + comment['displayName'] + '<br>';
   }
 }
 
