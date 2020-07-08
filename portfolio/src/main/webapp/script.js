@@ -46,3 +46,21 @@ async function deleteComments() {
     const response = await fetch('/delete-data', {method: 'POST'});
     getComments(0);
 }
+
+async function fetchBlobstoreUrl() {
+  fetch('/blobstore-url')
+      .then((response) => {
+        return response.text();
+      })
+      .then((imageUploadUrl) => {
+        const messageForm = document.getElementById('image-form');
+        messageForm.action = imageUploadUrl;
+      });
+}
+
+async function getImages() {
+    const response = await fetch('/image-form', {method: 'GET'}).then(response => response.json());
+    for (const url of response) {
+        document.getElementById('image-section').innerHTML += '<img src=' + url + ' height=150>';
+    }
+}
