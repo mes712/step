@@ -64,7 +64,7 @@ public class ImageFormServlet extends HttpServlet {
  
     ImmutableList<String> images = 
         Streams.stream(results.asIterable())
-            .map(entity -> (String) entity.getProperty(URL_PROP))
+            .map(entity -> entity.getProperty(URL_PROP).toString())
             .collect(toImmutableList());
             
     response.setContentType("application/json;");
