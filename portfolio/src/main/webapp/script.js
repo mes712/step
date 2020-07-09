@@ -37,7 +37,7 @@ async function getComments(max) {
   const response = await fetch('/data?max-comments=' + max).then(response => response.json())
   for (const comment of response) {
       document.getElementById('comments-section').innerHTML +=
-        comment['commentText'] + ' --' + comment['displayName'] + '<br>';
+        comment['commentText'] + ' --' + comment['displayName'] + '(email: ' + comment['email'] + ')<br>';
   }
 }
 
@@ -47,6 +47,7 @@ async function deleteComments() {
     getComments(0);
 }
 
+/* Fetches blobstore image upload url. */
 async function fetchBlobstoreUrl() {
   fetch('/blobstore-url')
       .then((response) => {
@@ -58,9 +59,22 @@ async function fetchBlobstoreUrl() {
       });
 }
 
+/* Fetches all image URLs. */
 async function getImages() {
-    const response = await fetch('/image-form', {method: 'GET'}).then(response => response.json());
-    for (const url of response) {
-        document.getElementById('image-section').innerHTML += '<img src=' + url + ' height=150>';
-    }
+  const response = await fetch('/image-form', {method: 'GET'}).then(response => response.json());
+  for (const url of response) {
+    document.getElementById('image-section').innerHTML += '<img src=' + url + ' height=150>';
+  }
+}
+
+/* Checks whether user is logged in. Prompts for login if needed, shows comment form otherwise. */
+async function checkLogin() {
+  const response = await fetch('/verify', {method: 'GET'}).then(response => response.text());
+  if (response) {
+    document.getElementById('comment-form').classList.remove('hidden'); 
+  } else {
+    var loginUrl = response;
+    document.getElementById('login').innerHTML += 
+        '<p>Login <a href=' + loginUrl + '>here</a>.</p>';
+  }
 }

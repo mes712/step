@@ -30,6 +30,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.common.collect.Streams;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that handles comment data. */
 @WebServlet("/data")
@@ -37,6 +39,7 @@ public class DataServlet extends HttpServlet {
   private static final String COMMENT_PROP = "comment";
   private static final String DISPLAY_PROP = "name";
   private static final String TIME_PROP = "timestamp";
+  private static final String EMAIL_PROP = "email";
   private static final String MAX_COMMENT_PROP = "max-comments";
   private static final String DEFAULT_VAL = "";
 
@@ -60,6 +63,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
+    String email = userService.getCurrentUser().getEmail();
     String commentText = getParameter(request, COMMENT_PROP, DEFAULT_VAL);
     String displayName = getParameter(request, DISPLAY_PROP, DEFAULT_VAL);
     long timestamp = System.currentTimeMillis();
@@ -68,6 +74,7 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty(COMMENT_PROP, commentText);
     commentEntity.setProperty(DISPLAY_PROP, displayName);
     commentEntity.setProperty(TIME_PROP, timestamp);
+    commentEntity.setProperty(EMAIL_PROP, email);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
@@ -91,8 +98,9 @@ public class DataServlet extends HttpServlet {
   }
 
   private static Comment makeComment(Entity ent) {
-    Comment comment = new Comment((String) ent.getProperty(COMMENT_PROP), 
-                                  (String) ent.getProperty(DISPLAY_PROP));
+    Comment comment = new Comment(ent.getProperty(COMMENT_PROP).toString(), 
+                                  ent.getProperty(DISPLAY_PROP).toString(),
+                                  ent.getProperty(EMAIL_PROP).toString());
     return comment;
   }
 
@@ -100,10 +108,12 @@ public class DataServlet extends HttpServlet {
   private static class Comment {
     private String commentText;
     private String displayName;
+    private String email;
 
-    public Comment(String commentText, String displayName) {
+    public Comment(String commentText, String displayName, String email) {
       this.commentText = commentText;
       this.displayName = displayName;
+      this.email = email;
     }
   }
 }  
