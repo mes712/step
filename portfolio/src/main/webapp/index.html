@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getComments(5)">
+  <body onload="getComments(5); checkLogin()">
     <div id="content">
       <ul>
         <li><a href="index.html" class="active">Home</a></li>
@@ -37,7 +37,8 @@
       </p>
     </div>
     <p>Leave a Comment:</p>
-    <form action="/data" method="POST">
+    <div id="login"></div>
+    <form id="comment-form" class="hidden" action="/data" method="POST">
       <p>Enter display name here:</p>
       <textarea name="name"></textarea>
       <br>

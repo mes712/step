@@ -4,6 +4,10 @@
   width: 650px;
 }
 
+.hidden {
+  display: none;
+}
+
 /* Button */
 .centered-button {
   text-align: center;
